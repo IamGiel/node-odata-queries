@@ -1,6 +1,12 @@
 
+Startup:
+- `npm install`
+- `npm run dev`
+- install Rest Client for VSCODE
+- call API in file test.http
+- alternatively, you can use POSTMAN and copy the API URLS in the test.http file
 
-Highe Level Overview: 
+High Level Overview: 
 - identify api resource to trigger (intent) => Price
 - indetify the entities for that resource
 - identify NLP skills that maps to the entities for that resource
