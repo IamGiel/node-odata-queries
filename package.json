@@ -1,12 +1,12 @@
 {
-  "name": "simlilearn",
+  "name": "node-odata-queries",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
-    "start": "node dist/gel.js",
-    "dev": "nodemon src/gel.ts",
+    "start": "node dist/index.js",
+    "dev": "nodemon src/index.ts",
     "build": "tsc -p ."
   },
   "keywords": [],
