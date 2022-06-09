@@ -1,5 +1,6 @@
 
 Startup:
+- Required files in the `.env` file
 - `npm install`
 - `npm run dev`
 - install Rest Client for VSCODE
