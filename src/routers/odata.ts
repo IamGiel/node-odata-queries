@@ -20,8 +20,6 @@ let router = express.Router();
 
 router.post("/luis", basicAuth, adminRole(ROLE.ADMIN), async (req: Request, res: Response, next: NextFunction) => {
   let result = await luisService(req.body.userInput)
-  console.log(result)
-  
   return await res.send(result.data)
 })
 
@@ -41,7 +39,7 @@ router.get("/startQuery", async (req: Request, res: Response, next: NextFunction
   const result = await luisService(req.body.userInput)
   const constructedDataQuery = await odataQuery(result.data)
   
-  console.log(">>>>>>>>>>>>>>>>>>>>>>> ", constructedDataQuery)
+  console.log(">>>>>>>>>>>>>>>>>>>>>>> ODATA QUERY >>>>>>>>>>>>>>>>>> \n ", constructedDataQuery)
   
   const config = {
     method: 'get',
@@ -65,7 +63,7 @@ router.get("/startQuery", async (req: Request, res: Response, next: NextFunction
         renderArr.push(`Category: ${k.sub_category_name}`)
         
         Object.entries(constructedDataQuery.mappedEntities).forEach(([key, value]) => {
-          console.log(">>>>>>> key >>>>>>> value >>>>>>>>>> ",key, value);
+          // console.log(">>>>>>> key >>>>>>> value >>>>>>>>>> ",key, value);
           let getEntVal = (k,label:string) => ` ${label}: ${k[value]} `;
           if(key == 'gradeEntity'){
             renderArr.push(getEntVal(k, `CATEGORY GRADE: `))
@@ -81,7 +79,7 @@ router.get("/startQuery", async (req: Request, res: Response, next: NextFunction
           }
         });
       
-        console.log(renderArr)
+        // console.log(renderArr)
         return renderArr.join(' ')
       })
       res.send(render)

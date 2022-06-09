@@ -23,8 +23,6 @@ export const marketPriceResourceApi = async (luis:ILuis) => {
     }
   }
 
-  console.log(luis)
-
   try {
     let result: AxiosResponse = await axios.get(
       `${PRICE_API_URL}$filter=${queryOptions.filter.contains}&%24format=JSON&%24top=10&%24skip=0&%24count=true`,

@@ -27,8 +27,7 @@ export interface IPriceEntityMapping {
   serviceRootName?:string,
   sort?:any
 }
-export const odataQuery = (entity: ILuis) => {
-  console.log(entity)
+export const odataQuery = (entity: ILuis) => {  
   const oq: IOdataQuery = getIntentAndOdataQuery(entity);
   return oq;
 }
@@ -37,8 +36,7 @@ export const output: IPriceEntityMapping = {};
 
 const getIntentAndOdataQuery = (luis: ILuis) => {
   if (luis && luis.prediction.topIntent) {
-    const topIntent: string = luis.prediction.topIntent;
-    console.log("topIntent  ", topIntent)
+    const topIntent: string = luis.prediction.topIntent;    
     let queryUrl;
     switch (topIntent) {
       case intent_category_priceCheck():
@@ -93,8 +91,7 @@ const getEntityMapping = (entities: IEntities) => {
   }
   if (hasGradeEntity) {
     output.gradeEntity = `grade_name`;
-  }
-  console.log(`ouput: ${JSON.stringify(output)}`)
+  }  
   return output
 }
 
@@ -111,7 +108,7 @@ const getAscDesc = (entities: IEntities) => {
   } else {
     output.descendingEntity = null;
     output.ascendingEntity = null;
-    output.sort = `asc`; // asc by default if null ? 
+    output.sort = `asc`; // asc by default if null (since price and dates favor ascending)
   }
   return output.sort;
 }
@@ -124,17 +121,14 @@ const orderByOp = (entities: IEntities) => {
 
   // orderBy options ===========
   // if priceEntity orderBy price
-  if (hasPriceEntity) {
-    console.log("hasPriceEntity: ", entities['$instance'].priceEntity)
+  if (hasPriceEntity) {    
     output.priceEntity = `price_point`;
     orderBy = `price_point`;
-  } else if (hasDateEntity) {
-    console.log("hasDateEntity: ", entities['$instance'].datetimeV2)
+  } else if (hasDateEntity) {    
     output.datetimeV2 = `actual_period`;
     orderBy = `actual_period`;
   }
-  else if (hasGradeEntity) {
-    console.log("hasGradeEntity: ", entities['$instance'].gradeEntity)
+  else if (hasGradeEntity) {    
     output.gradeEntity = `grade_name`;
     orderBy = `grade_name`;
   }
@@ -145,7 +139,6 @@ const getSubCategoryName = (entities: IEntities) => {
   let hasCategoryName: boolean = entities['$instance'].hasOwnProperty("categoryNameEntity");
   if (hasCategoryName) {
     let res = entities['$instance'].categoryNameEntity[0].text;
-    console.log("res >>>>> ", res)
     return String(res)
       .toLowerCase()
       .replace(/(^|\s)\S/g, L => L.toUpperCase());
@@ -172,13 +165,10 @@ const prepOdataQuery = (luis: ILuis, intent: string): IOdataQuery => {
   const urlConfigs = `&%24format=JSON&%24top=10&%24skip=0&%24count=true`;
   const resultArr: any = [];
 
-  resultArr.push(baseQuery)
+  resultArr.push(baseQuery);
   if (orderByOperator !== null) {
-    resultArr.push(`&$orderby=${orderByOp(luis.prediction.entities)} ${ascDescOperator}`)
+    resultArr.push(`&$orderby=${orderByOp(luis.prediction.entities)} ${ascDescOperator}`);
   }
-
-
-
   return {
     resource: intent,
     query: luis.query,

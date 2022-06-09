@@ -10,10 +10,8 @@ import { userInfoService } from "../fetch-data/getUserInfo";
 import jwt from "jsonwebtoken";
 // route authentication checkers
 
-export const basicAuth = (req: Request, res: Response, next: NextFunction) => {
-  console.log("basicAuth")
-  const user = req.body.user;
-  // console.log(req.body)
+export const basicAuth = (req: Request, res: Response, next: NextFunction) => { 
+  const user = req.body.user; 
   // if(token === null) return res.status(401);
   if (user === undefined) {
     return next(createError(403, "PLease login"));
@@ -26,19 +24,15 @@ export const adminRole = (role: string) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     const roleManagement: IMgmtDetails = await userInfoService();
     let getAdmin = roleManagement.users.filter(user => user.role === ROLE.ADMIN && user.name === req.body.user && user.role === req.body.role);
-    let getBasicUser = roleManagement.users.filter(user => user.role === ROLE.BASIC && user.name === req.body.user && user.role === req.body.role);
-    // console.log("reg user ", getBasicUser)
-    // console.log("reg admin ", getAdmin)
+    let getBasicUser = roleManagement.users.filter(user => user.role === ROLE.BASIC && user.name === req.body.user && user.role === req.body.role);      
     if (getAdmin.length > 0) {
-      let { name, role } = getAdmin[0]; // getting payloaa
-      // console.log(req.body)
+      let { name, role } = getAdmin[0]; // getting payloaa     
       res.status(200);
       return await next()
     } else
 
       if (getBasicUser.length > 0) {
-        let { name, role } = getBasicUser[0]; // getting payloaa
-        // console.log(req.body)
+        let { name, role } = getBasicUser[0]; // getting payloaa       
         res.status(200);
         return await next()
       } else {
@@ -53,8 +47,7 @@ export const loginCheck = async (req: Request, res: Response, next: NextFunction
   const roleManagement: IMgmtDetails = await userInfoService();
   const usersArrInDb = roleManagement.users;
   const matchingUser = usersArrInDb.filter(u => u.email === user && u.password === password)
-
-  console.log(JSON.stringify(matchingUser))
+ 
   if (matchingUser.length > 0) {
     const accesstoken = jwt.sign(matchingUser[0], process.env.ACCESS_TOKEN_SECRET as string);
     res.json({ accesstoken });
@@ -65,11 +58,9 @@ export const loginCheck = async (req: Request, res: Response, next: NextFunction
   }
 }
 
-export const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
-  console.log(req.headers)
+export const authenticateToken = (req: Request, res: Response, next: NextFunction) => { 
   // const authHeader = req.headers['authorization'];
-  // const token = authHeader?.split(' ')[1];
-  // console.log("this is token: ", token)
+  // const token = authHeader?.split(' ')[1]; 
   // if (token === null) return res.status(401);
 
   // jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user)=> {
