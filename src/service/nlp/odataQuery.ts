@@ -21,7 +21,11 @@ export interface IPriceEntityMapping {
   trendEntity?: string,
   categoryNameEntity?:string,
   priceEntity?:string,
-  datetimeV2?:string
+  datetimeV2?:string,
+  ascendingEntity?:any,
+  descendingEntity?:any,
+  serviceRootName?:string,
+  sort?:any
 }
 export const odataQuery = (entity: ILuis) => {
   console.log(entity)
@@ -53,9 +57,11 @@ const getIntentAndOdataQuery = (luis: ILuis) => {
 const getResourceName = (intent) => {
   let serviceRootName: any = null;
   if (intent === intent_category_priceCheck()) {
+    output.serviceRootName =`marketprice/Prices?`
     return serviceRootName = "marketprice/Prices?"
   }
   if (intent === intent_Supplier_Category_search()) {
+    output.serviceRootName =`"ShortListApi"`
     return serviceRootName = "ShortListApi"
   }
   return serviceRootName;
@@ -73,32 +79,21 @@ const getEntityMapping = (entities: IEntities) => {
 
   // $filter=contains()
   if (hasCategoryName) {
-    console.log("hasCategoryName: ", entities['$instance'].categoryNameEntity)
-
     output.filterContains = `sub_category_name`;
   }
-
   // entity map to skill (will influence how to render data)
   if (hasPricingOutlook) {
-    console.log("pricingOutlook or trend: ", entities['$instance'].pricingOutlook)
     output.pricingOutlook = `market_outlook`;
   }
   if (hasTrendEntity) {
-    console.log("pricingOutlook or trend: ", entities['$instance'].trendEntity)
     output.trendEntity = `percentage_change`;
   }
   if (hasPricingOverview) {
-    console.log("pricingOutlook: ", entities['$instance'].pricingOutlook)
     output.overviewEntity = `market_overview`;
   }
   if (hasGradeEntity) {
-    console.log("hasGradeEntity: ", entities['$instance'].gradeEntity)
     output.gradeEntity = `grade_name`;
   }
-
-
-
-
   console.log(`ouput: ${JSON.stringify(output)}`)
   return output
 }
@@ -107,16 +102,18 @@ const getAscDesc = (entities: IEntities) => {
 
   const hasDescending: boolean = entities['$instance'].hasOwnProperty("descendingEntity");
   const hasAscending: boolean = entities['$instance'].hasOwnProperty("ascendingEntity");
-  let sort: any;
   if (hasAscending) {
-    sort = 'asc';
+    output.ascendingEntity = `asc`;
+    output.sort = `asc`;
   } else if (hasDescending) {
-    sort = 'desc';
+    output.descendingEntity = `desc`
+    output.sort = `desc`;
   } else {
-    sort = null;
+    output.descendingEntity = null;
+    output.ascendingEntity = null;
+    output.sort = `asc`; // asc by default if null ? 
   }
-
-  return sort;
+  return output.sort;
 }
 
 const orderByOp = (entities: IEntities) => {
@@ -166,12 +163,12 @@ const select = (resourceName) => {
 }
 
 const prepOdataQuery = (luis: ILuis, intent: string): IOdataQuery => {
-  const dbEntityName: IPriceEntityMapping = getEntityMapping(luis.prediction.entities);
+  const skillEntityMapping: IPriceEntityMapping = getEntityMapping(luis.prediction.entities);
   const categoryName = getSubCategoryName(luis.prediction.entities);
   const resourceName = getResourceName(intent);
   const ascDescOperator = getAscDesc(luis.prediction.entities);
   const orderByOperator = orderByOp(luis.prediction.entities) // `&$orderby=${orderByOp(luis.prediction.entities)} `;
-  const baseQuery = `${resourceName}$filter=contains(${dbEntityName.filterContains},\'${categoryName}\')`;
+  const baseQuery = `${resourceName}$filter=contains(${skillEntityMapping.filterContains},\'${categoryName}\')`;
   const urlConfigs = `&%24format=JSON&%24top=10&%24skip=0&%24count=true`;
   const resultArr: any = [];
 
@@ -186,7 +183,7 @@ const prepOdataQuery = (luis: ILuis, intent: string): IOdataQuery => {
     resource: intent,
     query: luis.query,
     odataURI: `${encodeURI(resultArr.join(''))}${urlConfigs}`,
-    mappedEntities: dbEntityName
+    mappedEntities: skillEntityMapping
   };
 };
 

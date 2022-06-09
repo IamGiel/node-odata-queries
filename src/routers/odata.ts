@@ -82,8 +82,6 @@ router.get("/startQuery", async (req: Request, res: Response, next: NextFunction
         });
       
         console.log(renderArr)
-
-        console.log("renderARR --- ", renderArr)
         return renderArr.join(' ')
       })
       res.send(render)
