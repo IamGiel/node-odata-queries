@@ -8,17 +8,20 @@ import { intent_Supplier_Category_search, intent_category_priceCheck, intent_peo
 
 export interface IOdataQuery {
   odataURI: any,
-  query:string,
+  query: string,
   resource: any,
-  mappedEntities:IPriceEntityMapping
+  mappedEntities: IPriceEntityMapping
 }
 
 export interface IPriceEntityMapping {
-  filterContains?:string,
-  pricingOutlook?:string,
-  overviewEntity?:string,
-  gradeEntity?:string,
-  trendEntity?:string
+  filterContains?: string,
+  pricingOutlook?: string,
+  overviewEntity?: string,
+  gradeEntity?: string,
+  trendEntity?: string,
+  categoryNameEntity?:string,
+  priceEntity?:string,
+  datetimeV2?:string
 }
 export const odataQuery = (entity: ILuis) => {
   console.log(entity)
@@ -26,7 +29,9 @@ export const odataQuery = (entity: ILuis) => {
   return oq;
 }
 
-const getIntentAndOdataQuery = (luis:ILuis) => {
+export const output: IPriceEntityMapping = {};
+
+const getIntentAndOdataQuery = (luis: ILuis) => {
   if (luis && luis.prediction.topIntent) {
     const topIntent: string = luis.prediction.topIntent;
     console.log("topIntent  ", topIntent)
@@ -58,8 +63,8 @@ const getResourceName = (intent) => {
 }
 
 const getEntityMapping = (entities: IEntities) => {
-  const output: IPriceEntityMapping = {};
-  
+  // const output: IPriceEntityMapping = {};
+
   const hasPricingOutlook: boolean = entities['$instance'].hasOwnProperty("pricingOutlook");
   const hasPricingOverview: boolean = entities['$instance'].hasOwnProperty("overviewEntity");
   const hasCategoryName: boolean = entities['$instance'].hasOwnProperty("categoryNameEntity");
@@ -69,6 +74,7 @@ const getEntityMapping = (entities: IEntities) => {
   // $filter=contains()
   if (hasCategoryName) {
     console.log("hasCategoryName: ", entities['$instance'].categoryNameEntity)
+
     output.filterContains = `sub_category_name`;
   }
 
@@ -90,18 +96,18 @@ const getEntityMapping = (entities: IEntities) => {
     output.gradeEntity = `grade_name`;
   }
 
- 
 
- 
+
+
   console.log(`ouput: ${JSON.stringify(output)}`)
   return output
 }
 
-const getAscDesc = (entities:IEntities) => {
-  
+const getAscDesc = (entities: IEntities) => {
+
   const hasDescending: boolean = entities['$instance'].hasOwnProperty("descendingEntity");
   const hasAscending: boolean = entities['$instance'].hasOwnProperty("ascendingEntity");
-  let sort:any;
+  let sort: any;
   if (hasAscending) {
     sort = 'asc';
   } else if (hasDescending) {
@@ -113,19 +119,27 @@ const getAscDesc = (entities:IEntities) => {
   return sort;
 }
 
-const orderByOp = (entities:IEntities) => {
+const orderByOp = (entities: IEntities) => {
   const hasPriceEntity: boolean = entities['$instance'].hasOwnProperty("priceEntity");
   const hasDateEntity: boolean = entities['$instance'].hasOwnProperty("datetimeV2");
-  let orderBy:any = null;
+  const hasGradeEntity: boolean = entities['$instance'].hasOwnProperty("gradeEntity");
+  let orderBy: any = null;
 
   // orderBy options ===========
   // if priceEntity orderBy price
   if (hasPriceEntity) {
-    console.log("hasPriceEntity: ", entities['$instance'].hasPriceEntity)
+    console.log("hasPriceEntity: ", entities['$instance'].priceEntity)
+    output.priceEntity = `price_point`;
     orderBy = `price_point`;
   } else if (hasDateEntity) {
     console.log("hasDateEntity: ", entities['$instance'].datetimeV2)
+    output.datetimeV2 = `actual_period`;
     orderBy = `actual_period`;
+  }
+  else if (hasGradeEntity) {
+    console.log("hasGradeEntity: ", entities['$instance'].gradeEntity)
+    output.gradeEntity = `grade_name`;
+    orderBy = `grade_name`;
   }
   return orderBy;
 }
@@ -151,7 +165,7 @@ const select = (resourceName) => {
   // GET serviceRoot/Airports?$select=Name, IcaoCode
 }
 
-const prepOdataQuery = (luis:ILuis, intent: string): IOdataQuery => {
+const prepOdataQuery = (luis: ILuis, intent: string): IOdataQuery => {
   const dbEntityName: IPriceEntityMapping = getEntityMapping(luis.prediction.entities);
   const categoryName = getSubCategoryName(luis.prediction.entities);
   const resourceName = getResourceName(intent);
@@ -159,18 +173,18 @@ const prepOdataQuery = (luis:ILuis, intent: string): IOdataQuery => {
   const orderByOperator = orderByOp(luis.prediction.entities) // `&$orderby=${orderByOp(luis.prediction.entities)} `;
   const baseQuery = `${resourceName}$filter=contains(${dbEntityName.filterContains},\'${categoryName}\')`;
   const urlConfigs = `&%24format=JSON&%24top=10&%24skip=0&%24count=true`;
-  const resultArr:any = [];
+  const resultArr: any = [];
 
   resultArr.push(baseQuery)
-  if(orderByOperator!==null){
+  if (orderByOperator !== null) {
     resultArr.push(`&$orderby=${orderByOp(luis.prediction.entities)} ${ascDescOperator}`)
   }
 
-  
+
 
   return {
     resource: intent,
-    query:luis.query,
+    query: luis.query,
     odataURI: `${encodeURI(resultArr.join(''))}${urlConfigs}`,
     mappedEntities: dbEntityName
   };
