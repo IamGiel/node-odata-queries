@@ -19,13 +19,13 @@ export interface IPriceEntityMapping {
   overviewEntity?: string,
   gradeEntity?: string,
   trendEntity?: string,
-  categoryNameEntity?:string,
+  categoryNameEntity?:any,
   priceEntity?:string,
   datetimeV2?:string,
   ascendingEntity?:any,
   descendingEntity?:any,
   serviceRootName?:string,
-  sort?:any
+  sort?:any,
 }
 export const odataQuery = (entity: ILuis) => {  
   const oq: IOdataQuery = getIntentAndOdataQuery(entity);
@@ -136,13 +136,17 @@ const orderByOp = (entities: IEntities) => {
 }
 
 const getSubCategoryName = (entities: IEntities) => {
-  let hasCategoryName: boolean = entities['$instance'].hasOwnProperty("categoryNameEntity");
+  // console.log("IENTITIES ------------- \n ", entities.hasOwnProperty("categoryNameEntity"));
+  let hasCategoryName: boolean = entities.hasOwnProperty("categoryNameEntity");
   if (hasCategoryName) {
-    let res = entities['$instance'].categoryNameEntity[0].text;
-    return String(res)
-      .toLowerCase()
-      .replace(/(^|\s)\S/g, L => L.toUpperCase());
+    let res = String(entities.categoryNameEntity[0][0])
+    .toLowerCase()
+    .replace(/(^|\s)\S/g, L => L.toUpperCase());
+    output.categoryNameEntity = res
+    return res
+       
   } else {
+    output.categoryNameEntity = null;
     return null;
   }
 }
