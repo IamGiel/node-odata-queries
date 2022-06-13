@@ -4,6 +4,8 @@ import create = require('http-errors');
 import { basicAuth } from "./service/auth/basicAuth";
 import pageRoutes from "./routers/pages";
 import authRoutes from "./routers/authRoutes";
+import utilityRoutes from "./routers/utility";
+
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({
@@ -21,6 +23,7 @@ const PORT = process.env.PORT;
 
 app.use('/odata', router);
 app.use('/auth', authRoutes)
+app.use('/utils', utilityRoutes)
 app.use('/', pageRoutes);
 
 app.use(async (req: Request, res: Response, next: NextFunction) => {

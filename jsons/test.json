@@ -1,0 +1,68 @@
+{
+  "pricingOutlook": ["historical"],
+  "trendEntity": ["historical"],
+  "priceEntity": ["prices"],
+  "categoryName_v2": [["IT Services"]],
+  "supplier": ["services"],
+  "$instance": {
+    "pricingOutlook": [
+      {
+        "type": "pricingOutlook",
+        "text": "historical",
+        "startIndex": 0,
+        "length": 10,
+        "score": 0.98661184,
+        "modelTypeId": 1,
+        "modelType": "Entity Extractor",
+        "recognitionSources": ["model"]
+      }
+    ],
+    "trendEntity": [
+      {
+        "type": "trendEntity",
+        "text": "historical",
+        "startIndex": 0,
+        "length": 10,
+        "score": 0.9340252,
+        "modelTypeId": 1,
+        "modelType": "Entity Extractor",
+        "recognitionSources": ["model"]
+      }
+    ],
+    "priceEntity": [
+      {
+        "type": "priceEntity",
+        "text": "prices",
+        "startIndex": 11,
+        "length": 6,
+        "score": 0.98374057,
+        "modelTypeId": 1,
+        "modelType": "Entity Extractor",
+        "recognitionSources": ["model"]
+      }
+    ],
+    "categoryName_v2": [
+      {
+        "type": "categoryName_v2",
+        "text": "IT services",
+        "startIndex": 22,
+        "length": 11,
+        "modelTypeId": 5,
+        "modelType": "List Entity Extractor",
+        "recognitionSources": ["model"]
+      }
+    ],
+    "supplier": [
+      {
+        "type": "supplier",
+        "text": "services",
+        "startIndex": 25,
+        "length": 8,
+        "score": 0.82336354,
+        "modelTypeId": 1,
+        "modelType": "Entity Extractor",
+        "recognitionSources": ["model"]
+      }
+    ]
+  }
+}

@@ -22,5 +22,6 @@ export interface IEntities {
   theTopList?:any,
   datetimeV2?:  any,
   number?:  any,
+  categoryName_v2?:any,
   '$instance'?:  any
 }
