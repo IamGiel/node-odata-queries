@@ -1,89 +1,91 @@
 {
-  "priceEntity": ["price"],
-  "trendEntity": ["price forecast"],
-  "pricingOutlook": ["forecast"],
-  "datetimeV2": [
-    {
-      "type": "daterange",
-      "values": [
-        {
-          "timex": "2022",
-          "resolution": [{ "start": "2022-01-01", "end": "2023-01-01" }]
-        }
-      ]
+  "query": "Mexican Currency - 130-180g Recycled Paper price forecast",
+  "prediction": {
+    "topIntent": "intent_category_priceCheck",
+    "intents": {
+      "intent_category_priceCheck": { "score": 0.57241803 },
+      "intent_Supplier_Category_search": { "score": 0.09826874 },
+      "intent_people_check": { "score": 0.02830398 },
+      "None": { "score": 0.0029904833 }
+    },
+    "entities": {
+      "number": [-130],
+      "categoryNameEntity": [["Paper"]],
+      "categoryName_v2": [["Paper Packaging - Raw Materials"]],
+      "priceEntity": ["price"],
+      "trendEntity": ["price forecast"],
+      "pricingOutlook": ["forecast"],
+      "$instance": {
+        "number": [
+          {
+            "type": "builtin.number",
+            "text": "- 130",
+            "startIndex": 17,
+            "length": 5,
+            "modelTypeId": 2,
+            "modelType": "Prebuilt Entity Extractor",
+            "recognitionSources": ["model"]
+          }
+        ],
+        "categoryNameEntity": [
+          {
+            "type": "categoryNameEntity",
+            "text": "Paper",
+            "startIndex": 37,
+            "length": 5,
+            "modelTypeId": 5,
+            "modelType": "List Entity Extractor",
+            "recognitionSources": ["model"]
+          }
+        ],
+        "categoryName_v2": [
+          {
+            "type": "categoryName_v2",
+            "text": "Paper",
+            "startIndex": 37,
+            "length": 5,
+            "modelTypeId": 5,
+            "modelType": "List Entity Extractor",
+            "recognitionSources": ["model"]
+          }
+        ],
+        "priceEntity": [
+          {
+            "type": "priceEntity",
+            "text": "price",
+            "startIndex": 43,
+            "length": 5,
+            "score": 0.9607636,
+            "modelTypeId": 1,
+            "modelType": "Entity Extractor",
+            "recognitionSources": ["model"]
+          }
+        ],
+        "trendEntity": [
+          {
+            "type": "trendEntity",
+            "text": "price forecast",
+            "startIndex": 43,
+            "length": 14,
+            "score": 0.9647529,
+            "modelTypeId": 1,
+            "modelType": "Entity Extractor",
+            "recognitionSources": ["model"]
+          }
+        ],
+        "pricingOutlook": [
+          {
+            "type": "pricingOutlook",
+            "text": "forecast",
+            "startIndex": 49,
+            "length": 8,
+            "score": 0.7318201,
+            "modelTypeId": 1,
+            "modelType": "Entity Extractor",
+            "recognitionSources": ["model"]
+          }
+        ]
+      }
     }
-  ],
-  "number": [2022],
-  "categoryName_v2": [["Vitamins"]],
-  "$instance": {
-    "priceEntity": [
-      {
-        "type": "priceEntity",
-        "text": "price",
-        "startIndex": 13,
-        "length": 5,
-        "score": 0.9939073,
-        "modelTypeId": 1,
-        "modelType": "Entity Extractor",
-        "recognitionSources": ["model"]
-      }
-    ],
-    "trendEntity": [
-      {
-        "type": "trendEntity",
-        "text": "price forecast",
-        "startIndex": 13,
-        "length": 14,
-        "score": 0.9895437,
-        "modelTypeId": 1,
-        "modelType": "Entity Extractor",
-        "recognitionSources": ["model"]
-      }
-    ],
-    "pricingOutlook": [
-      {
-        "type": "pricingOutlook",
-        "text": "forecast",
-        "startIndex": 19,
-        "length": 8,
-        "score": 0.9866472,
-        "modelTypeId": 1,
-        "modelType": "Entity Extractor",
-        "recognitionSources": ["model"]
-      }
-    ],
-    "datetimeV2": [
-      {
-        "type": "builtin.datetimeV2.daterange",
-        "text": "2022",
-        "startIndex": 28,
-        "length": 4,
-        "modelTypeId": 2,
-        "modelType": "Prebuilt Entity Extractor",
-        "recognitionSources": ["model"]
-      }
-    ],
-    "number": [
-      {
-        "type": "builtin.number",
-        "text": "2022",
-        "startIndex": 28,
-        "length": 4,
-        "modelTypeId": 2,
-        "modelType": "Prebuilt Entity Extractor",
-        "recognitionSources": ["model"]
-      }
-    ],
-    "categoryName_v2": [
-      {
-        "type": "categoryName_v2",
-        "text": "vitamins",
-        "startIndex": 37,
-        "length": 8,
-        "modelTypeId": 5,
-        "modelType": "List Entity Extractor",
-        "recognitionSources": ["model"]
-      }
-    ]
   }
 }

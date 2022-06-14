@@ -196,6 +196,7 @@ const select = (resourceName) => {
 }
 
 const eqAndOrOperator = (skills:IPriceEntityMapping, luis:ILuis, urlConfigs:string) => {
+  console.log(`======== LUIS ======== \n ${JSON.stringify(luis)}`)
   // this func constructs odata queries with (eq, and, or) operators
   const tempArr:any = []; // hold values to concatenate
   const root:any = skills.serviceRootName ? `${skills.serviceRootName}$filter=` : null;
