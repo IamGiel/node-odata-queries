@@ -68,7 +68,7 @@ ENTITY SKILLS are NLP entities that targets a specific Datahub Resource API DB f
 Some skills are not pushed in odataquery, they are TRIGGER SKILLS. Skills such as:
   - `pricingOutlook` = triggers pricing outlook - helps scope data to render (eg `market_outlook`)
   - `priceEntity` = triggers what resource to pull data from (price api)
-  - `trendEntity` = triggers a resolver to calculate pricing trend for example
+  - `trendEntity` = triggers a resolver to calculate pricing trend for example (calculating the price of Nylon next year). It is also helps trigger some ODATA operators such as `lt` and `gt` when combined with `datetimeV2`.
   - `averageEntity` = triggers what resource to pull data from (average price api)
   - `overviewEntity` = triggers pricing overview - helps scope data to render (eg `market_overview`)
 
