@@ -59,46 +59,44 @@ Authorization: Bearer {{$processEnv ACCESS_TOKEN_SECRET}}
 
 
 ## Utterance Samples: 
-what is the price of soda ash last year
-market outlook for soda ash
-price for soda ash
-what is the price trends for soda ash
-what is the cheapest price trends for soda ash // asc price trends
-what is the lowest price of soda ash last year // desc price date
-market summary for nylon // entities to render
-grade for nylon with lowest cost
-grade for nylon with lowest
-best grade market overview for nylon for Dec 2022
-best grade market overview for nylon for Dec 2022 historic prices
-best grade market overview for nylon from Nov 2021 to Dec 2021 price trends
-can you give the price for a lawyer in UK?
-historical prices for caustic soda
-Market price of Fluorosurfactants
+- what is the price of soda ash last year
+- market outlook for soda ash
+- price for soda ash
+- what is the price trends for soda ash
+- what is the cheapest price trends for soda ash // asc price trends
+- what is the lowest price of soda ash last year // desc price date
+- market summary for nylon // entities to render
+- grade for nylon with lowest cost
+- grade for nylon with lowest
+- best grade market overview for nylon for Dec 2022
+- best grade market overview for nylon for Dec 2022 historic prices
+- best grade market overview for nylon from Nov 2021 to Dec 2021 price trends
+- can you give the price for a lawyer in UK?
+- historical prices for caustic soda
+- Market price of Fluorosurfactants
 
 ## --- test: petrol ---
-historic prices for petrol in United States
-highest prices prices for petrol in United States
-prices prices for petrol in United States last year
+- historic prices for petrol in United States
+- highest prices prices for petrol in United States
+- prices prices for petrol in United States last year
 
 ## --- test: date (type date, type daterange) --- 
-highest historical prices for IT Services in United States Dec 25, 2021 // date
-highest historical prices for IT Services in United States Dec 2021 // daterange
+- highest historical prices for IT Services in United States Dec 25, 2021 // date
+- highest historical prices for IT Services in United States Dec 2021 // daterange
 
 ## --- test: category vs subcategory ---
-I am looking price forecast 2022 for nylon
-I am looking price forecast 2022 for vitamins
+- I am looking price forecast 2022 for nylon
+- I am looking price forecast 2022 for vitamins
 
-## TODO:
-
-TODO:
+## TODO NOTES:
 
 Get Regions and unique values
 Get Country Code and unique values
 Make these Skills for Luis to detect unique country region values and map it to DB entity for country and region
 
 DATAHUB update, operators (eq, and, or) are now implemented) need to evaluate how it can be utlized to optimize search
- - which entities will likely be mapped to `eq` to get results
- - for example ===== sub_category_name eq 'Aluminum' and actual_period_str eq 'Nov-2021'
+- which entities will likely be mapped to `eq` to get results
+- for example ===== sub_category_name eq 'Aluminum' and actual_period_str eq 'Nov-2021'
 
 
 EXAMPLES: 
