@@ -62,7 +62,7 @@ router.get("/startQuery", async (req: Request, res: Response, next: NextFunction
   const result = await luisService(req.body.userInput)
   const constructedDataQuery = await odataQuery(result.data)
   
-  console.log(">>>>>>>>>>>>>>>>>>>>>>> ODATA QUERY >>>>>>>>>>>>>>>>>> \n ", constructedDataQuery)
+  // console.log(">>>>>>>>>>>>>>>>>>>>>>> ODATA QUERY >>>>>>>>>>>>>>>>>> \n ", constructedDataQuery)
   
   const config:IHttpConfig = {
     method: 'get',
