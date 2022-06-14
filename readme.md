@@ -60,7 +60,7 @@ Authorization: Bearer {{$processEnv ACCESS_TOKEN_SECRET}}
 
 ## ENTITY SKILLS vs TRIGGER SKILLS
 
-ENTITY SKILLS are NLP entities that targets a specific Datahub Resource API DB entity.  For example, 
+ENTITY SKILLS are NLP entities that targets a specific Datahub Resource API DB fields.  For example, 
   - `datetimeV2` = is mapped to `actual_period` (a DH field).  We then collect the value of the dates.
   - `geographyV2` = is mapped to `location_name` (a DH field).  We then collect the value of the location.
   - `categoryName_v2` and `categoryNameEntity` = are mapped to `category_name` and `sub_category_name` respectively.  We collect its value.
