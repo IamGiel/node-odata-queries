@@ -1,17 +1,28 @@
 {
-  "pricingOutlook": ["historical"],
-  "trendEntity": ["historical"],
-  "priceEntity": ["prices"],
-  "categoryName_v2": [["IT Services"]],
-  "supplier": ["services"],
+  "priceEntity": ["price"],
+  "trendEntity": ["price forecast"],
+  "pricingOutlook": ["forecast"],
+  "datetimeV2": [
+    {
+      "type": "daterange",
+      "values": [
+        {
+          "timex": "2022",
+          "resolution": [{ "start": "2022-01-01", "end": "2023-01-01" }]
+        }
+      ]
+    }
+  ],
+  "number": [2022],
+  "categoryName_v2": [["Vitamins"]],
   "$instance": {
-    "pricingOutlook": [
+    "priceEntity": [
       {
-        "type": "pricingOutlook",
-        "text": "historical",
-        "startIndex": 0,
-        "length": 10,
-        "score": 0.98661184,
+        "type": "priceEntity",
+        "text": "price",
+        "startIndex": 13,
+        "length": 5,
+        "score": 0.9939073,
         "modelTypeId": 1,
         "modelType": "Entity Extractor",
         "recognitionSources": ["model"]
@@ -20,47 +31,57 @@
     "trendEntity": [
       {
         "type": "trendEntity",
-        "text": "historical",
-        "startIndex": 0,
-        "length": 10,
-        "score": 0.9340252,
+        "text": "price forecast",
+        "startIndex": 13,
+        "length": 14,
+        "score": 0.9895437,
         "modelTypeId": 1,
         "modelType": "Entity Extractor",
         "recognitionSources": ["model"]
       }
     ],
-    "priceEntity": [
+    "pricingOutlook": [
       {
-        "type": "priceEntity",
-        "text": "prices",
-        "startIndex": 11,
-        "length": 6,
-        "score": 0.98374057,
+        "type": "pricingOutlook",
+        "text": "forecast",
+        "startIndex": 19,
+        "length": 8,
+        "score": 0.9866472,
         "modelTypeId": 1,
         "modelType": "Entity Extractor",
+        "recognitionSources": ["model"]
+      }
+    ],
+    "datetimeV2": [
+      {
+        "type": "builtin.datetimeV2.daterange",
+        "text": "2022",
+        "startIndex": 28,
+        "length": 4,
+        "modelTypeId": 2,
+        "modelType": "Prebuilt Entity Extractor",
+        "recognitionSources": ["model"]
+      }
+    ],
+    "number": [
+      {
+        "type": "builtin.number",
+        "text": "2022",
+        "startIndex": 28,
+        "length": 4,
+        "modelTypeId": 2,
+        "modelType": "Prebuilt Entity Extractor",
         "recognitionSources": ["model"]
       }
     ],
     "categoryName_v2": [
       {
         "type": "categoryName_v2",
-        "text": "IT services",
-        "startIndex": 22,
-        "length": 11,
+        "text": "vitamins",
+        "startIndex": 37,
+        "length": 8,
         "modelTypeId": 5,
         "modelType": "List Entity Extractor",
-        "recognitionSources": ["model"]
-      }
-    ],
-    "supplier": [
-      {
-        "type": "supplier",
-        "text": "services",
-        "startIndex": 25,
-        "length": 8,
-        "score": 0.82336354,
-        "modelTypeId": 1,
-        "modelType": "Entity Extractor",
         "recognitionSources": ["model"]
       }
     ]

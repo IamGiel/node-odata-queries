@@ -18,6 +18,12 @@ import { IPrice } from "../models/interfaces/supplierInterface";
 
 let router = express.Router();
 
+interface IHttpConfig {
+  method:string,
+  url:string,
+  headers:any
+}
+
 router.post("/luis", basicAuth, adminRole(ROLE.ADMIN), async (req: Request, res: Response, next: NextFunction) => {
   let result = await luisService(req.body.userInput)
   return await res.send(result.data)
@@ -38,6 +44,17 @@ router.get("/getOdataQuery", async (req: Request, res: Response, next: NextFunct
   const constructedDataQuery = await odataQuery(result.data)
   console.log(">>>>>>>>>>>>>>>>>>>>>>> ODATA QUERY >>>>>>>>>>>>>>>>>> \n ", constructedDataQuery)
   res.send(constructedDataQuery)
+
+  const config:IHttpConfig = {
+    method: 'get',
+    url: `https://datahub-stage.beroelive.ai/api/v1/${constructedDataQuery.odataURI}`,
+    headers: {
+      'Authorization': `Bearer ${process.env.ACCESS_TOKEN_SECRET}`
+    }
+  };
+
+  console.log(`CONFIG: \n${JSON.stringify(config.url)}`)
+
 });
 
 router.get("/startQuery", async (req: Request, res: Response, next: NextFunction) => {
@@ -47,7 +64,7 @@ router.get("/startQuery", async (req: Request, res: Response, next: NextFunction
   
   console.log(">>>>>>>>>>>>>>>>>>>>>>> ODATA QUERY >>>>>>>>>>>>>>>>>> \n ", constructedDataQuery)
   
-  const config = {
+  const config:IHttpConfig = {
     method: 'get',
     url: `https://datahub-stage.beroelive.ai/api/v1/${constructedDataQuery.odataURI}`,
     headers: {

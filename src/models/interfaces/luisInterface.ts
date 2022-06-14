@@ -23,5 +23,8 @@ export interface IEntities {
   datetimeV2?:  any,
   number?:  any,
   categoryName_v2?:any,
+  trendEntity?:any,
+  overviewEntity?:any,
+  gradeEntity?:any,
   '$instance'?:  any
 }
