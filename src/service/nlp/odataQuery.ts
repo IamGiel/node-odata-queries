@@ -153,7 +153,7 @@ const getAscDesc = (entities: IEntities) => {
 
 const orderByOp = (entities: IEntities) => {
   let orderBy: any = null;
-  if (output.priceEntity.name) { 
+  if (output.priceEntity && output.priceEntity.name) { 
     orderBy = output.priceEntity.name;
   } else if (output.datetimeV2.name) {
     orderBy = output.datetimeV2.name;
