@@ -179,3 +179,25 @@ There are two types of date 1) type `date` and 2) type `daterange`
 
 ```
 
+## Latest
+--- 
+Utterance: "What is the price forecast for stainless steel in USA"
+
+result: "marketprice/Prices?$filter=sub_category_name eq 'Stainless Steel' and actual_period gt '2022-07-01' lt '2022-08-01'&%24format=JSON&%24top=10&%24skip=0&%24count=true"
+---
+
+---
+Utterance: "What is the price forecast for stainless steel in USA next month"
+
+result: "marketprice/Prices?$filter=sub_category_name eq 'Stainless Steel' and actual_period gt '2022-07-01' lt '2022-08-01'&%24format=JSON&%24top=10&%24skip=0&%24count=true"
+---
+
+---
+Utterance: "What is the price forecast for stainless steel in USA for the next 6 months"
+
+result: "marketprice/Prices?$filter=sub_category_name eq 'Stainless Steel' and actual_period gt '2022-06-21' lt '2022-12-21'&%24format=JSON&%24top=10&%24skip=0&%24count=true"
+---
+
+
+
+

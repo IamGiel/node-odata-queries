@@ -30,9 +30,8 @@ export interface IPriceEntityMapping {
   priceEntity?:any,
   datetimeV2?:any,
   dateType?:any,
-  ascendingEntity?:any,
-  descendingEntity?:any,
   serviceRootName?:any,
+  ordinalV2?:any,
   sort?:any,
 }
 export const odataQuery = (entity: ILuis) => {  
@@ -76,7 +75,7 @@ const getResourceName = (intent) => {
 
 const getEntityMapping = (entities: IEntities) => {
   // console.log(`============= entities =============\n ${JSON.stringify(entities)}`)
-
+  // Basically, these properties tells us which field values to render
   const hasPricingOutlook: boolean = entities['$instance'].hasOwnProperty("pricingOutlook");
   const hasPricingOverview: boolean = entities['$instance'].hasOwnProperty("overviewEntity");
   const hasSubCategoryName: boolean = entities['$instance'].hasOwnProperty("categoryNameEntity");
@@ -104,6 +103,11 @@ const getEntityMapping = (entities: IEntities) => {
     output.datetimeV2.name = `actual_period`;
     output.datetimeV2.value = resolvedDate;
     output.dateType = entities.datetimeV2[0].type;
+    if(output.dateType=="daterange"){
+      output.sort = `desc`; // show most recent
+    } else {
+      output.sort = `asc`;
+    }
   }
   if (hasPriceEntity) { 
     output.priceEntity = {};
@@ -129,26 +133,8 @@ const getEntityMapping = (entities: IEntities) => {
     output.gradeEntity = {};
     output.gradeEntity.name = `grade_name`;
     output.gradeEntity.value = entities.gradeEntity[0];
-  }  
-  return output
-}
-
-const getAscDesc = (entities: IEntities) => {
-
-  const hasDescending: boolean = entities['$instance'].hasOwnProperty("descendingEntity");
-  const hasAscending: boolean = entities['$instance'].hasOwnProperty("ascendingEntity");
-  if (hasAscending) {
-    output.ascendingEntity = `asc`;
-    output.sort = `asc`;
-  } else if (hasDescending) {
-    output.descendingEntity = `desc`
-    output.sort = `desc`;
-  } else {
-    output.descendingEntity = null;
-    output.ascendingEntity = null;
-    output.sort = `asc`; // asc by default if null (since price and dates favor ascending)
   }
-  return output.sort;
+  return output
 }
 
 const orderByOp = (entities: IEntities) => {
@@ -195,7 +181,7 @@ const select = (resourceName) => {
   // GET serviceRoot/Airports?$select=Name, IcaoCode
 }
 
-const eqAndOrOperator = (skills:IPriceEntityMapping, luis:ILuis, urlConfigs:string) => {
+const eqAndOrOperator = (skills:IPriceEntityMapping, luis:ILuis) => {
   console.log(`======== LUIS ======== \n ${JSON.stringify(luis)}`)
   // this func constructs odata queries with (eq, and, or) operators
   const tempArr:any = []; // hold values to concatenate
@@ -211,29 +197,36 @@ const eqAndOrOperator = (skills:IPriceEntityMapping, luis:ILuis, urlConfigs:stri
   // prepend eq on the following entities
   if(category && categoryEntity){
     // NOTE BACK TICKS - SPACES HERE MATTER!
-    tempArr.push(`${categoryEntity} `)
-    tempArr.push(`eq`)
-    tempArr.push(` ${category} `)
+    tempArr.push(`${categoryEntity}`)
+    tempArr.push(` eq `)
+    tempArr.push(`'${category}'`)
   }
 
   if(datetimeV2 && skills.dateType==="date"){
-    tempArr.push(`and`)
-    tempArr.push(` ${skills.datetimeV2.name} `)
-    tempArr.push(`eq`)
-    tempArr.push(` ${datetimeV2.value} `)
+    tempArr.push(` and `)
+    tempArr.push(`${skills.datetimeV2.name}`)
+    tempArr.push(` eq `)
+    // tempArr.push(`'${datetimeV2.value}'`)
+    tempArr.push(`${new Date(`${datetimeV2.value}`).toISOString()}`)
   }
 
   if(datetimeV2 && skills.dateType==="daterange"){
-    tempArr.push(`and `)
+    tempArr.push(` and `)
     tempArr.push(`${skills.datetimeV2.name}`)
     tempArr.push(` gt `)
-    tempArr.push(datetimeV2.value.start)
+    tempArr.push(`${new Date(`${datetimeV2.value.start}`).toISOString()}`)
+    tempArr.push(` and `)
+    tempArr.push(`${skills.datetimeV2.name}`)
     tempArr.push(` lt `)
-    tempArr.push(datetimeV2.value.end)
+    tempArr.push(`${new Date(`${datetimeV2.value.end}`).toISOString()}`)
   }
+
+  tempArr.push(`&$format=JSON&$top=10&$skip=0&$count=true`);
   console.log("tempArr ", tempArr)
 
-  return `${encodeURI(tempArr.join(''))}${urlConfigs}`;
+  // return `${encodeURI(tempArr.join(''))}${urlConfigs}`;
+
+  return `${tempArr.join('')}`
 
   // `${skills.serviceRootName}?$filter=actual_period%20eq%20'2022-12-01T00:00:00Z'%20and%20feedstock_id%20eq%20'D304'%20and%20fc_id%20eq%20'b48ec86cd4dc-382b-4a23-0041-1eefcf67'&%24format=JSON&%24top=10&%24skip=0&%24count=true`
   // https://datahub-stage.beroelive.ai/api/v1/marketprice/Prices?$filter=actual_period%20eq%20'2022-12-01T00:00:00Z'%20and%20feedstock_id%20eq%20'D304'%20and%20fc_id%20eq%20'b48ec86cd4dc-382b-4a23-0041-1eefcf67'&%24format=JSON&%24top=10&%24skip=0&%24count=true
@@ -243,17 +236,16 @@ const prepOdataQuery = (luis: ILuis, intent: string): IOdataQuery => {
   const skillEntityMapping: IPriceEntityMapping = getEntityMapping(luis.prediction.entities);
   const categoryName = getCategory(luis.prediction.entities);
   const resourceName = getResourceName(intent);
-  const ascDescOperator = getAscDesc(luis.prediction.entities);
   const orderByOperator = orderByOp(luis.prediction.entities) // `&$orderby=${orderByOp(luis.prediction.entities)} `;
   const baseQuery = `${resourceName}$filter=contains(${skillEntityMapping.categoryNameEntity},\'${categoryName}\')`;
   const urlConfigs = `&%24format=JSON&%24top=10&%24skip=0&%24count=true`;
   const resultArr: any = [];
 
-  const baseQueryV2 = eqAndOrOperator(skillEntityMapping, luis, urlConfigs);
+  const baseQueryV2 = eqAndOrOperator(skillEntityMapping, luis);
 
   resultArr.push(baseQuery);
   if (orderByOperator !== null) {
-    resultArr.push(`&$orderby=${orderByOp(luis.prediction.entities)} ${ascDescOperator}`);
+    resultArr.push(`&$orderby=${orderByOp(luis.prediction.entities)} ${output.sort}`);
   }
   return {
     resource: intent,

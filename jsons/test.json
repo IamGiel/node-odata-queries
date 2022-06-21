@@ -1,49 +1,58 @@
 {
-  "query": "Mexican Currency - 130-180g Recycled Paper price forecast",
+  "query": "Past 12 months Petrol Prices in Singapore",
   "prediction": {
     "topIntent": "intent_category_priceCheck",
     "intents": {
-      "intent_category_priceCheck": { "score": 0.57241803 },
-      "intent_Supplier_Category_search": { "score": 0.09826874 },
-      "intent_people_check": { "score": 0.02830398 },
-      "None": { "score": 0.0029904833 }
+      "intent_category_priceCheck": { "score": 0.7432421 },
+      "intent_Supplier_Category_search": { "score": 0.061148755 },
+      "intent_people_check": { "score": 0.0333073 },
+      "None": { "score": 0.0023118882 }
     },
     "entities": {
-      "number": [-130],
-      "categoryNameEntity": [["Paper"]],
-      "categoryName_v2": [["Paper Packaging - Raw Materials"]],
-      "priceEntity": ["price"],
-      "trendEntity": ["price forecast"],
-      "pricingOutlook": ["forecast"],
+      "datetimeV2": [
+        {
+          "type": "daterange",
+          "values": [
+            {
+              "timex": "(2021-06-21,2022-06-21,P12M)",
+              "resolution": [{ "start": "2021-06-21", "end": "2022-06-21" }]
+            }
+          ]
+        }
+      ],
+      "number": [12],
+      "categoryName_v2": [["Energy"]],
+      "priceEntity": ["Prices"],
+      "geographyV2": [{ "value": "Singapore", "type": "countryRegion" }],
       "$instance": {
-        "number": [
+        "datetimeV2": [
           {
-            "type": "builtin.number",
-            "text": "- 130",
-            "startIndex": 17,
-            "length": 5,
+            "type": "builtin.datetimeV2.daterange",
+            "text": "Past 12 months",
+            "startIndex": 0,
+            "length": 14,
             "modelTypeId": 2,
             "modelType": "Prebuilt Entity Extractor",
             "recognitionSources": ["model"]
           }
         ],
-        "categoryNameEntity": [
+        "number": [
           {
-            "type": "categoryNameEntity",
-            "text": "Paper",
-            "startIndex": 37,
-            "length": 5,
-            "modelTypeId": 5,
-            "modelType": "List Entity Extractor",
+            "type": "builtin.number",
+            "text": "12",
+            "startIndex": 5,
+            "length": 2,
+            "modelTypeId": 2,
+            "modelType": "Prebuilt Entity Extractor",
             "recognitionSources": ["model"]
           }
         ],
         "categoryName_v2": [
           {
             "type": "categoryName_v2",
-            "text": "Paper",
-            "startIndex": 37,
-            "length": 5,
+            "text": "Petrol",
+            "startIndex": 15,
+            "length": 6,
             "modelTypeId": 5,
             "modelType": "List Entity Extractor",
             "recognitionSources": ["model"]
@@ -52,36 +61,23 @@
         "priceEntity": [
           {
             "type": "priceEntity",
-            "text": "price",
-            "startIndex": 43,
-            "length": 5,
-            "score": 0.9607636,
+            "text": "Prices",
+            "startIndex": 22,
+            "length": 6,
+            "score": 0.55662495,
             "modelTypeId": 1,
             "modelType": "Entity Extractor",
             "recognitionSources": ["model"]
           }
         ],
-        "trendEntity": [
+        "geographyV2": [
           {
-            "type": "trendEntity",
-            "text": "price forecast",
-            "startIndex": 43,
-            "length": 14,
-            "score": 0.9647529,
-            "modelTypeId": 1,
-            "modelType": "Entity Extractor",
-            "recognitionSources": ["model"]
-          }
-        ],
-        "pricingOutlook": [
-          {
-            "type": "pricingOutlook",
-            "text": "forecast",
-            "startIndex": 49,
-            "length": 8,
-            "score": 0.7318201,
-            "modelTypeId": 1,
-            "modelType": "Entity Extractor",
+            "type": "builtin.geographyV2.countryRegion",
+            "text": "Singapore",
+            "startIndex": 32,
+            "length": 9,
+            "modelTypeId": 2,
+            "modelType": "Prebuilt Entity Extractor",
             "recognitionSources": ["model"]
           }
         ]

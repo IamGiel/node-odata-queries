@@ -26,5 +26,6 @@ export interface IEntities {
   trendEntity?:any,
   overviewEntity?:any,
   gradeEntity?:any,
+  ordinalV2?:any,
   '$instance'?:  any
 }
