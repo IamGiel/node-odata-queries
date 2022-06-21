@@ -210,6 +210,14 @@ const eqAndOrOperator = (skills:IPriceEntityMapping, luis:ILuis) => {
     tempArr.push(`${new Date(`${datetimeV2.value}`).toISOString()}`)
   }
 
+  if(datetimeV2 && skills.dateType==="set"){
+    tempArr.push(` and `)
+    tempArr.push(`${skills.datetimeV2.name}`)
+    tempArr.push(` eq `)
+    // tempArr.push(`'${datetimeV2.value}'`)
+    tempArr.push(`${new Date(`${datetimeV2.value}`).toISOString()}`)
+  }
+
   if(datetimeV2 && skills.dateType==="daterange"){
     tempArr.push(` and `)
     tempArr.push(`${skills.datetimeV2.name}`)
