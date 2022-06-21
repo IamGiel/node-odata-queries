@@ -1,4 +1,5 @@
- ```{
+ ```
+ {
   resource: 'intent_category_priceCheck',
   query: 'On nov 14 1984 Petrol Prices in Singapore',
   odataURI: "marketprice/Prices?$filter=contains(category_name,'Energy')&$orderby=actual_period%20asc&%24format=JSON&%24top=10&%24skip=0&%24count=true",
@@ -13,4 +14,6 @@
     category: 'Energy',
     serviceRootName: 'marketprice/Prices?'
   }
-}```
+}
+
+```
