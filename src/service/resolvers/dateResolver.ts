@@ -25,7 +25,7 @@ export const dateResolver = (dateObj:ILuisDate) => {
     res.fieldName = `actual_period`;
     res.value = dateObj.values[0].resolution[0]
   } else if(dateObj.type ==="set") {
-    res.fieldName = `period_interval`;
+    res.fieldName = `actual_period`;
     res.value = getTimex(dateObj.values[0].timex) 
   }
   return res;
