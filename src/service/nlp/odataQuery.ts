@@ -99,15 +99,12 @@ const getEntityMapping = (entities: IEntities) => {
   }
   if (hasDateTimeV2) {
     const resolvedDate = dateResolver(entities.datetimeV2[0]);
+    console.log(`resolved date ${resolvedDate}`)
     output.datetimeV2 = {};
-    output.datetimeV2.name = `actual_period`;
-    output.datetimeV2.value = resolvedDate;
+    output.datetimeV2.name = resolvedDate.fieldName;
+    output.datetimeV2.value = resolvedDate.value;
     output.dateType = entities.datetimeV2[0].type;
-    if(output.dateType=="daterange"){
-      output.sort = `desc`; // show most recent
-    } else {
-      output.sort = `asc`;
-    }
+    output.sort = `desc`;
   }
   if (hasPriceEntity) { 
     output.priceEntity = {};
@@ -215,7 +212,7 @@ const eqAndOrOperator = (skills:IPriceEntityMapping, luis:ILuis) => {
     tempArr.push(`${skills.datetimeV2.name}`)
     tempArr.push(` eq `)
     // tempArr.push(`'${datetimeV2.value}'`)
-    tempArr.push(`${new Date(`${datetimeV2.value}`).toISOString()}`)
+    tempArr.push(`${datetimeV2.value}`)
   }
 
   if(datetimeV2 && skills.dateType==="daterange"){
@@ -230,7 +227,7 @@ const eqAndOrOperator = (skills:IPriceEntityMapping, luis:ILuis) => {
   }
 
   tempArr.push(`&$format=JSON&$top=10&$skip=0&$count=true`);
-  console.log("tempArr ", tempArr)
+  // console.log("tempArr ", tempArr)
 
   // return `${encodeURI(tempArr.join(''))}${urlConfigs}`;
 

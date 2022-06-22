@@ -16,11 +16,22 @@ export interface ILuisDate {
 
 export const dateResolver = (dateObj:ILuisDate) => {
   console.log("date resolver ", dateObj)
+  let res:any = {};
   if(dateObj.type === "daterange"){
-    return dateObj.values[0].resolution[0];
+    res.fieldName = `actual_period`;
+    res.value = dateObj.values[0].resolution[0]
+    
   } else if(dateObj.type ==="date") {
-    return dateObj.values[0].resolution[0].value;
+    res.fieldName = `actual_period`;
+    res.value = dateObj.values[0].resolution[0]
   } else if(dateObj.type ==="set") {
-    return dateObj.values[0].timex;
+    res.fieldName = `period_interval`;
+    res.value = getTimex(dateObj.values[0].timex) 
   }
+  return res;
+}
+
+const getTimex = (timexValue) => {
+  console.log(timexValue);
+  return timexValue;
 }

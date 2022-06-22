@@ -1,58 +1,33 @@
 {
-  "query": "Past 12 months Petrol Prices in Singapore",
+  "query": "hdpe price forecast ona quarterly basis can you provide the charts",
   "prediction": {
     "topIntent": "intent_category_priceCheck",
     "intents": {
-      "intent_category_priceCheck": { "score": 0.7432421 },
-      "intent_Supplier_Category_search": { "score": 0.061148755 },
-      "intent_people_check": { "score": 0.0333073 },
-      "None": { "score": 0.0023118882 }
+      "intent_category_priceCheck": { "score": 0.7403846 },
+      "intent_Supplier_Category_search": { "score": 0.08544898 },
+      "intent_people_check": { "score": 0.034427747 },
+      "None": { "score": 0.0015243416 }
     },
     "entities": {
+      "categoryNameEntity": [["HDPE"]],
+      "priceEntity": ["price"],
+      "trendEntity": ["price forecast"],
+      "pricingOutlook": ["forecast"],
       "datetimeV2": [
         {
-          "type": "daterange",
+          "type": "set",
           "values": [
-            {
-              "timex": "(2021-06-21,2022-06-21,P12M)",
-              "resolution": [{ "start": "2021-06-21", "end": "2022-06-21" }]
-            }
+            { "timex": "P3M", "resolution": [{ "value": "not resolved" }] }
           ]
         }
       ],
-      "number": [12],
-      "categoryName_v2": [["Energy"]],
-      "priceEntity": ["Prices"],
-      "geographyV2": [{ "value": "Singapore", "type": "countryRegion" }],
       "$instance": {
-        "datetimeV2": [
+        "categoryNameEntity": [
           {
-            "type": "builtin.datetimeV2.daterange",
-            "text": "Past 12 months",
+            "type": "categoryNameEntity",
+            "text": "hdpe",
             "startIndex": 0,
-            "length": 14,
-            "modelTypeId": 2,
-            "modelType": "Prebuilt Entity Extractor",
-            "recognitionSources": ["model"]
-          }
-        ],
-        "number": [
-          {
-            "type": "builtin.number",
-            "text": "12",
-            "startIndex": 5,
-            "length": 2,
-            "modelTypeId": 2,
-            "modelType": "Prebuilt Entity Extractor",
-            "recognitionSources": ["model"]
-          }
-        ],
-        "categoryName_v2": [
-          {
-            "type": "categoryName_v2",
-            "text": "Petrol",
-            "startIndex": 15,
-            "length": 6,
+            "length": 4,
             "modelTypeId": 5,
             "modelType": "List Entity Extractor",
             "recognitionSources": ["model"]
@@ -61,20 +36,44 @@
         "priceEntity": [
           {
             "type": "priceEntity",
-            "text": "Prices",
-            "startIndex": 22,
-            "length": 6,
-            "score": 0.55662495,
+            "text": "price",
+            "startIndex": 5,
+            "length": 5,
+            "score": 0.93953097,
             "modelTypeId": 1,
             "modelType": "Entity Extractor",
             "recognitionSources": ["model"]
           }
         ],
-        "geographyV2": [
+        "trendEntity": [
           {
-            "type": "builtin.geographyV2.countryRegion",
-            "text": "Singapore",
-            "startIndex": 32,
+            "type": "trendEntity",
+            "text": "price forecast",
+            "startIndex": 5,
+            "length": 14,
+            "score": 0.73413813,
+            "modelTypeId": 1,
+            "modelType": "Entity Extractor",
+            "recognitionSources": ["model"]
+          }
+        ],
+        "pricingOutlook": [
+          {
+            "type": "pricingOutlook",
+            "text": "forecast",
+            "startIndex": 11,
+            "length": 8,
+            "score": 0.6315933,
+            "modelTypeId": 1,
+            "modelType": "Entity Extractor",
+            "recognitionSources": ["model"]
+          }
+        ],
+        "datetimeV2": [
+          {
+            "type": "builtin.datetimeV2.set",
+            "text": "quarterly",
+            "startIndex": 24,
             "length": 9,
             "modelTypeId": 2,
             "modelType": "Prebuilt Entity Extractor",
