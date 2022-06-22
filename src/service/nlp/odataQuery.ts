@@ -18,8 +18,8 @@ export interface IOdataQuery {
 // type any -> so we can capture null default values
 export interface IPriceEntityMapping {
   filterContains?: any,
-  filterCategoryName?:any,
-  filterSubCategoryName?:any,
+  // filterCategoryName?:any,
+  // filterSubCategoryName?:any,
   category?:any,
   pricingOutlook?: any,
   overviewEntity?: any,
@@ -33,6 +33,7 @@ export interface IPriceEntityMapping {
   serviceRootName?:any,
   ordinalV2?:any,
   sort?:any,
+  format?:any
 }
 export const odataQuery = (entity: ILuis) => {  
   const oq: IOdataQuery = getIntentAndOdataQuery(entity);
@@ -78,22 +79,17 @@ const getEntityMapping = (entities: IEntities) => {
   // Basically, these properties tells us which field values to render
   const hasPricingOutlook: boolean = entities['$instance'].hasOwnProperty("pricingOutlook");
   const hasPricingOverview: boolean = entities['$instance'].hasOwnProperty("overviewEntity");
-  const hasSubCategoryName: boolean = entities['$instance'].hasOwnProperty("categoryNameEntity");
-  const hasCategoryNameV2: boolean = entities['$instance'].hasOwnProperty("categoryName_v2");
   const hasDateTimeV2: boolean = entities['$instance'].hasOwnProperty("datetimeV2");
   const hasGradeEntity: boolean = entities['$instance'].hasOwnProperty("gradeEntity");
   const hasTrendEntity: boolean = entities['$instance'].hasOwnProperty("trendEntity");
   const hasGeographyV2: boolean = entities['$instance'].hasOwnProperty("geographyV2");
   const hasPriceEntity: boolean = entities['$instance'].hasOwnProperty("priceEntity");
+  const hasSubCategoryName: boolean = entities.hasOwnProperty("categoryNameEntity");
+  const hasCategoryNamev2: boolean = entities.hasOwnProperty("categoryName_v2");
+  const urlConfigs = `&$format=JSON&$top=10&$skip=0&$count=true`;
 
-  // $filter=contains()
-  if (hasSubCategoryName) {
-    output.filterSubCategoryName = `sub_category_name`;
-  }
-  if (hasCategoryNameV2) {
-    output.filterCategoryName = `category_name`;
-  }
-  // entity map to skill (will influence how to render data)
+  output.format = urlConfigs;
+  
   if (hasPricingOutlook) {
     output.pricingOutlook = `market_outlook`;
   }
@@ -131,6 +127,21 @@ const getEntityMapping = (entities: IEntities) => {
     output.gradeEntity.name = `grade_name`;
     output.gradeEntity.value = entities.gradeEntity[0];
   }
+
+ 
+  if(hasSubCategoryName){
+    output.categoryNameEntity = `sub_category_name`;
+    output.category = String(entities.categoryNameEntity[0][0])
+    .toLowerCase()
+    .replace(/(^|\s)\S/g, L => L.toUpperCase());
+  } else if (hasCategoryNamev2){
+    output.categoryNameEntity = `category_name`;
+    output.category = String(entities.categoryName_v2[0][0])
+    .toLowerCase()
+    .replace(/(^|\s)\S/g, L => L.toUpperCase());
+  } else {
+    output.category = null;
+  };
   return output
 }
 
@@ -147,29 +158,6 @@ const orderByOp = (entities: IEntities) => {
   return orderBy;
 }
 
-const getCategory = (entities: IEntities) => {
-  const hasSubCategoryName: boolean = entities.hasOwnProperty("categoryNameEntity");
-  const hasCategoryNamev2: boolean = entities.hasOwnProperty("categoryName_v2");
-  if(hasSubCategoryName){
-    output.categoryNameEntity = output.filterSubCategoryName;
-    output.category = String(entities.categoryNameEntity[0][0])
-    .toLowerCase()
-    .replace(/(^|\s)\S/g, L => L.toUpperCase());
-  } else if (hasCategoryNamev2){
-    output.categoryNameEntity = output.filterCategoryName;
-    output.category = String(entities.categoryName_v2[0][0])
-    .toLowerCase()
-    .replace(/(^|\s)\S/g, L => L.toUpperCase());
-  } else {
-    output.category = null;
-  };
-
-  return output.category;
-
-
- 
-}
-
 const topSkip = (resourceName) => {
   // GET serviceRoot/People?$top=2
 }
@@ -178,75 +166,60 @@ const select = (resourceName) => {
   // GET serviceRoot/Airports?$select=Name, IcaoCode
 }
 
-const eqAndOrOperator = (skills:IPriceEntityMapping, luis:ILuis) => {
-  console.log(`======== LUIS ======== \n ${JSON.stringify(luis)}`)
+const eqAndOrOperator = () => {
+  console.log(`======== OUPUT ======== \n ${JSON.stringify(output)}`)
   // this func constructs odata queries with (eq, and, or) operators
   const tempArr:any = []; // hold values to concatenate
-  const root:any = skills.serviceRootName ? `${skills.serviceRootName}$filter=` : null;
-  const categoryEntity = skills.categoryNameEntity ? skills.categoryNameEntity : null;
-  const category:any = skills.category ? skills.category : null;
-  const datetimeV2:any = skills.datetimeV2 ? skills.datetimeV2 : null;
+  const categoryEntity = output.categoryNameEntity ? output.categoryNameEntity : null;
+  const category:any = output.category ? output.category : null;
+  const datetimeV2:any = output.datetimeV2 ? output.datetimeV2 : null;
   
   // if entity/skills exist, push it to tempArr
-  if(root){
-    tempArr.push(root);
-  }
+  if(output.serviceRootName){
+    tempArr.push(`${output.serviceRootName}$filter=`);
+  } 
   // prepend eq on the following entities
-  if(category && categoryEntity){
+  if(output.category && output.categoryNameEntity){
     // NOTE BACK TICKS - SPACES HERE MATTER!
-    tempArr.push(`${categoryEntity}`)
+    tempArr.push(`${output.categoryNameEntity}`)
     tempArr.push(` eq `)
-    tempArr.push(`'${category}'`)
+    tempArr.push(`'${output.category}'`)
   }
-
-  if(datetimeV2 && skills.dateType==="date"){
+  if(datetimeV2 && output.dateType==="date"){
     tempArr.push(` and `)
-    tempArr.push(`${skills.datetimeV2.name}`)
+    tempArr.push(`${output.datetimeV2.name}`)
     tempArr.push(` eq `)
     // tempArr.push(`'${datetimeV2.value}'`)
     tempArr.push(`${new Date(`${datetimeV2.value}`).toISOString()}`)
   }
-
-  if(datetimeV2 && skills.dateType==="set"){
+  if(datetimeV2 && output.dateType==="set"){
     tempArr.push(` and `)
-    tempArr.push(`${skills.datetimeV2.name}`)
+    tempArr.push(`${output.datetimeV2.name}`)
     tempArr.push(` eq `)
-    // tempArr.push(`'${datetimeV2.value}'`)
     tempArr.push(`${datetimeV2.value}`)
   }
-
-  if(datetimeV2 && skills.dateType==="daterange"){
+  if(datetimeV2 && output.dateType==="daterange"){
     tempArr.push(` and `)
-    tempArr.push(`${skills.datetimeV2.name}`)
+    tempArr.push(`${output.datetimeV2.name}`)
     tempArr.push(` gt `)
     tempArr.push(`${new Date(`${datetimeV2.value.start}`).toISOString()}`)
     tempArr.push(` and `)
-    tempArr.push(`${skills.datetimeV2.name}`)
+    tempArr.push(`${output.datetimeV2.name}`)
     tempArr.push(` lt `)
     tempArr.push(`${new Date(`${datetimeV2.value.end}`).toISOString()}`)
   }
-
   tempArr.push(`&$format=JSON&$top=10&$skip=0&$count=true`);
-  // console.log("tempArr ", tempArr)
-
-  // return `${encodeURI(tempArr.join(''))}${urlConfigs}`;
-
   return `${tempArr.join('')}`
-
-  // `${skills.serviceRootName}?$filter=actual_period%20eq%20'2022-12-01T00:00:00Z'%20and%20feedstock_id%20eq%20'D304'%20and%20fc_id%20eq%20'b48ec86cd4dc-382b-4a23-0041-1eefcf67'&%24format=JSON&%24top=10&%24skip=0&%24count=true`
-  // https://datahub-stage.beroelive.ai/api/v1/marketprice/Prices?$filter=actual_period%20eq%20'2022-12-01T00:00:00Z'%20and%20feedstock_id%20eq%20'D304'%20and%20fc_id%20eq%20'b48ec86cd4dc-382b-4a23-0041-1eefcf67'&%24format=JSON&%24top=10&%24skip=0&%24count=true
 }
 
 const prepOdataQuery = (luis: ILuis, intent: string): IOdataQuery => {
+  output.serviceRootName = getResourceName(intent)
   const skillEntityMapping: IPriceEntityMapping = getEntityMapping(luis.prediction.entities);
-  const categoryName = getCategory(luis.prediction.entities);
-  const resourceName = getResourceName(intent);
   const orderByOperator = orderByOp(luis.prediction.entities) // `&$orderby=${orderByOp(luis.prediction.entities)} `;
-  const baseQuery = `${resourceName}$filter=contains(${skillEntityMapping.categoryNameEntity},\'${categoryName}\')`;
-  const urlConfigs = `&%24format=JSON&%24top=10&%24skip=0&%24count=true`;
+  const baseQuery = `${output.serviceRootName}$filter=contains(${output.categoryNameEntity},\'${output.category}\')`;
   const resultArr: any = [];
 
-  const baseQueryV2 = eqAndOrOperator(skillEntityMapping, luis);
+  const baseQueryV2 = eqAndOrOperator();
 
   resultArr.push(baseQuery);
   if (orderByOperator !== null) {
@@ -255,14 +228,10 @@ const prepOdataQuery = (luis: ILuis, intent: string): IOdataQuery => {
   return {
     resource: intent,
     query: luis.query,
-    odataURI: `${encodeURI(resultArr.join(''))}${urlConfigs}`,
+    odataURI: `${encodeURI(resultArr.join(''))}${output.format}`,
     odataURIv2:baseQueryV2,
     mappedEntities: skillEntityMapping
   };
 };
-
-
-  // url: 'https://datahub-stage.beroelive.ai/api/v1/marketprice/Prices?$filter=contains(market_outlook,\'witnessed\')&$orderby=price_point%20asc&%24format=JSON&%24top=10&%24skip=0&%24count=true',
-
 
 

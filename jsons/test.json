@@ -1,86 +1,11 @@
 {
-  "query": "hdpe price forecast ona quarterly basis can you provide the charts",
-  "prediction": {
-    "topIntent": "intent_category_priceCheck",
-    "intents": {
-      "intent_category_priceCheck": { "score": 0.7403846 },
-      "intent_Supplier_Category_search": { "score": 0.08544898 },
-      "intent_people_check": { "score": 0.034427747 },
-      "None": { "score": 0.0015243416 }
-    },
-    "entities": {
-      "categoryNameEntity": [["HDPE"]],
-      "priceEntity": ["price"],
-      "trendEntity": ["price forecast"],
-      "pricingOutlook": ["forecast"],
-      "datetimeV2": [
-        {
-          "type": "set",
-          "values": [
-            { "timex": "P3M", "resolution": [{ "value": "not resolved" }] }
-          ]
-        }
-      ],
-      "$instance": {
-        "categoryNameEntity": [
-          {
-            "type": "categoryNameEntity",
-            "text": "hdpe",
-            "startIndex": 0,
-            "length": 4,
-            "modelTypeId": 5,
-            "modelType": "List Entity Extractor",
-            "recognitionSources": ["model"]
-          }
-        ],
-        "priceEntity": [
-          {
-            "type": "priceEntity",
-            "text": "price",
-            "startIndex": 5,
-            "length": 5,
-            "score": 0.93953097,
-            "modelTypeId": 1,
-            "modelType": "Entity Extractor",
-            "recognitionSources": ["model"]
-          }
-        ],
-        "trendEntity": [
-          {
-            "type": "trendEntity",
-            "text": "price forecast",
-            "startIndex": 5,
-            "length": 14,
-            "score": 0.73413813,
-            "modelTypeId": 1,
-            "modelType": "Entity Extractor",
-            "recognitionSources": ["model"]
-          }
-        ],
-        "pricingOutlook": [
-          {
-            "type": "pricingOutlook",
-            "text": "forecast",
-            "startIndex": 11,
-            "length": 8,
-            "score": 0.6315933,
-            "modelTypeId": 1,
-            "modelType": "Entity Extractor",
-            "recognitionSources": ["model"]
-          }
-        ],
-        "datetimeV2": [
-          {
-            "type": "builtin.datetimeV2.set",
-            "text": "quarterly",
-            "startIndex": 24,
-            "length": 9,
-            "modelTypeId": 2,
-            "modelType": "Prebuilt Entity Extractor",
-            "recognitionSources": ["model"]
-          }
-        ]
-      }
-    }
-  }
+  "pricingOutlook": "market_outlook",
+  "datetimeV2": { "name": "actual_period", "value": "P3M" },
+  "dateType": "set",
+  "sort": "desc",
+  "priceEntity": { "name": "price_point", "value": "price" },
+  "trendEntity": { "name": "percentage_change", "value": "price forecast" },
+  "categoryNameEntity": "sub_category_name",
+  "category": "Hdpe",
+  "serviceRootName": "marketprice/Prices?"
 }
