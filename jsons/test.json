@@ -1,11 +1,17 @@
 {
-  "pricingOutlook": "market_outlook",
-  "datetimeV2": { "name": "actual_period", "value": "P3M" },
-  "dateType": "set",
+  "format": "&$format=JSON&$top=10&$skip=0&$count=true",
+  "datetimeV2": {
+    "name": "actual_period",
+    "value": { "start": "2021-06-22", "end": "2022-06-22" }
+  },
+  "dateType": "daterange",
   "sort": "desc",
-  "priceEntity": { "name": "price_point", "value": "price" },
-  "trendEntity": { "name": "percentage_change", "value": "price forecast" },
-  "categoryNameEntity": "sub_category_name",
-  "category": "Hdpe",
+  "priceEntity": { "name": "price_point", "value": "Prices" },
+  "geographyV2": {
+    "name": "location_name",
+    "value": { "value": "Singapore", "type": "countryRegion" }
+  },
+  "categoryNameEntity": "category_name",
+  "category": "Energy",
   "serviceRootName": "marketprice/Prices?"
 }

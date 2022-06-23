@@ -18,8 +18,7 @@ export interface IOdataQuery {
 // type any -> so we can capture null default values
 export interface IPriceEntityMapping {
   filterContains?: any,
-  // filterCategoryName?:any,
-  // filterSubCategoryName?:any,
+  select?:string[],
   category?:any,
   pricingOutlook?: any,
   overviewEntity?: any,
@@ -35,48 +34,45 @@ export interface IPriceEntityMapping {
   sort?:any,
   format?:any
 }
-export const odataQuery = (entity: ILuis) => {  
-  const oq: IOdataQuery = getIntentAndOdataQuery(entity);
-  return oq;
+export const odataQuery = (entity: ILuis):IOdataQuery => {  
+  return getIntentAndOdataQuery(entity);
 }
 
 const output: IPriceEntityMapping = {};
+output.select = [];
 
 const getIntentAndOdataQuery = (luis: ILuis) => {
-  if (luis && luis.prediction.topIntent) {
-    const topIntent: string = luis.prediction.topIntent;    
-    let queryUrl;
-    switch (topIntent) {
-      case intent_category_priceCheck():
-        queryUrl = prepOdataQuery(luis, topIntent);
-        return queryUrl;
-        break;
-      case intent_Supplier_Category_search():
-        queryUrl = prepOdataQuery(luis, topIntent);
-        return queryUrl;
-        break;
-      default:
-    }
+  switch (luis.prediction.topIntent) {
+    case intent_category_priceCheck():
+      return prepOdataQuery(luis, luis.prediction.topIntent);
+      break;
+    case intent_Supplier_Category_search():
+      return prepOdataQuery(luis, luis.prediction.topIntent);
+      break;
+    default:
+      return prepOdataQuery(luis, luis.prediction.topIntent);
+      break;
   }
 }
 
 const getResourceName = (intent) => {
-  let serviceRootName: any = null;
-  if (intent === intent_category_priceCheck()) {
-    output.serviceRootName =`marketprice/Prices?`
-    return serviceRootName = "marketprice/Prices?"
+  switch (intent) {
+    case intent_category_priceCheck():
+      return `marketprice/Prices?`
+      break;
+    case intent_Supplier_Category_search():
+      return `"ShortListApi"`
+      break;
+    default:
+      return null;
+      break;
   }
-  if (intent === intent_Supplier_Category_search()) {
-    output.serviceRootName =`"ShortListApi"`
-    return serviceRootName = "ShortListApi"
-  }
-  return serviceRootName;
-
 }
+
+const getURLConfigs = () => `&$format=JSON&$top=10&$skip=0&$count=true`;
 
 const getEntityMapping = (entities: IEntities) => {
   // console.log(`============= entities =============\n ${JSON.stringify(entities)}`)
-  // Basically, these properties tells us which field values to render
   const hasPricingOutlook: boolean = entities['$instance'].hasOwnProperty("pricingOutlook");
   const hasPricingOverview: boolean = entities['$instance'].hasOwnProperty("overviewEntity");
   const hasDateTimeV2: boolean = entities['$instance'].hasOwnProperty("datetimeV2");
@@ -86,9 +82,6 @@ const getEntityMapping = (entities: IEntities) => {
   const hasPriceEntity: boolean = entities['$instance'].hasOwnProperty("priceEntity");
   const hasSubCategoryName: boolean = entities.hasOwnProperty("categoryNameEntity");
   const hasCategoryNamev2: boolean = entities.hasOwnProperty("categoryName_v2");
-  const urlConfigs = `&$format=JSON&$top=10&$skip=0&$count=true`;
-
-  output.format = urlConfigs;
   
   if (hasPricingOutlook) {
     output.pricingOutlook = `market_outlook`;
@@ -99,49 +92,61 @@ const getEntityMapping = (entities: IEntities) => {
     output.datetimeV2 = {};
     output.datetimeV2.name = resolvedDate.fieldName;
     output.datetimeV2.value = resolvedDate.value;
+    output?.select?.push(resolvedDate.fieldName);
     output.dateType = entities.datetimeV2[0].type;
     output.sort = `desc`;
   }
   if (hasPriceEntity) { 
     output.priceEntity = {};
     output.priceEntity.name = `price_point`;
+    output?.select?.push(`price_point`);
+    output?.select?.push(`unit`);
+    output?.select?.push(`currency`);
     output.priceEntity.value = entities.priceEntity[0];
   }
   if (hasGeographyV2) {
     output.geographyV2 = {};
     output.geographyV2.name = `location_name`;
+    output?.select?.push(`location_name`)
     output.geographyV2.value = entities.geographyV2[0]
   }
   if (hasTrendEntity) {
     output.trendEntity = {};
     output.trendEntity.name = `percentage_change`;
+    output?.select?.push(`percentage_change`);
     output.trendEntity.value = entities.trendEntity[0];
   }
   if (hasPricingOverview) {
     output.overviewEntity = {};
     output.overviewEntity.name = `market_overview`;
+    output?.select?.push(`market_overview`);
     output.overviewEntity.value = entities.overviewEntity[0];
   }
   if (hasGradeEntity) {
     output.gradeEntity = {};
     output.gradeEntity.name = `grade_name`;
+    output?.select?.push(`grade_name`);
     output.gradeEntity.value = entities.gradeEntity[0];
   }
 
  
   if(hasSubCategoryName){
     output.categoryNameEntity = `sub_category_name`;
+    output?.select?.push(`sub_category_name`)
     output.category = String(entities.categoryNameEntity[0][0])
     .toLowerCase()
     .replace(/(^|\s)\S/g, L => L.toUpperCase());
   } else if (hasCategoryNamev2){
     output.categoryNameEntity = `category_name`;
+    output?.select?.push(`category_name`)
     output.category = String(entities.categoryName_v2[0][0])
     .toLowerCase()
     .replace(/(^|\s)\S/g, L => L.toUpperCase());
   } else {
     output.category = null;
   };
+
+  output.format = getURLConfigs();
   return output
 }
 
@@ -152,9 +157,6 @@ const orderByOp = (entities: IEntities) => {
   } else if (output.datetimeV2.name) {
     orderBy = output.datetimeV2.name;
   }
-  else if (output.gradeEntity.name) {    
-    orderBy = output.gradeEntity.name;
-  }
   return orderBy;
 }
 
@@ -162,12 +164,15 @@ const topSkip = (resourceName) => {
   // GET serviceRoot/People?$top=2
 }
 
-const select = (resourceName) => {
-  // GET serviceRoot/Airports?$select=Name, IcaoCode
+const selectFields = (selectedFields?:string[]) => {
+  if(selectedFields){
+    return `&$select=${selectedFields.join(",")}`
+  } else {
+    return '';
+  }
 }
 
 const eqAndOrOperator = () => {
-  console.log(`======== OUPUT ======== \n ${JSON.stringify(output)}`)
   // this func constructs odata queries with (eq, and, or) operators
   const tempArr:any = []; // hold values to concatenate
   const categoryEntity = output.categoryNameEntity ? output.categoryNameEntity : null;
@@ -208,23 +213,27 @@ const eqAndOrOperator = () => {
     tempArr.push(` lt `)
     tempArr.push(`${new Date(`${datetimeV2.value.end}`).toISOString()}`)
   }
-  tempArr.push(`&$format=JSON&$top=10&$skip=0&$count=true`);
+  tempArr.push(getURLConfigs());
   return `${tempArr.join('')}`
 }
 
 const prepOdataQuery = (luis: ILuis, intent: string): IOdataQuery => {
-  output.serviceRootName = getResourceName(intent)
+ 
+  output.serviceRootName = getResourceName(intent);
+ 
   const skillEntityMapping: IPriceEntityMapping = getEntityMapping(luis.prediction.entities);
   const orderByOperator = orderByOp(luis.prediction.entities) // `&$orderby=${orderByOp(luis.prediction.entities)} `;
-  const baseQuery = `${output.serviceRootName}$filter=contains(${output.categoryNameEntity},\'${output.category}\')`;
+  const select = selectFields(output.select)
+  const baseQuery = `${output.serviceRootName}$filter=contains(${output.categoryNameEntity},\'${output.category}\')${select ? select : ''}`;
   const resultArr: any = [];
-
   const baseQueryV2 = eqAndOrOperator();
 
   resultArr.push(baseQuery);
+
   if (orderByOperator !== null) {
     resultArr.push(`&$orderby=${orderByOp(luis.prediction.entities)} ${output.sort}`);
   }
+
   return {
     resource: intent,
     query: luis.query,
