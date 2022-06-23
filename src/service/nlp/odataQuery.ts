@@ -88,7 +88,7 @@ const getEntityMapping = (entities: IEntities) => {
   }
   if (hasDateTimeV2) {
     const resolvedDate = dateResolver(entities.datetimeV2[0]);
-    console.log(`resolved date ${resolvedDate}`)
+    // console.log(`resolved date ${resolvedDate}`)
     output.datetimeV2 = {};
     output.datetimeV2.name = resolvedDate.fieldName;
     output.datetimeV2.value = resolvedDate.value;
@@ -150,6 +150,21 @@ const getEntityMapping = (entities: IEntities) => {
   return output
 }
 
+const getFilter = (filterCandidates:IPriceEntityMapping) => {
+  const {category,categoryNameEntity, datetimeV2, dateType, priceEntity, overviewEntity, pricingOutlook, trendEntity, gradeEntity} = filterCandidates;
+   
+  console.log({categoryNameEntity, datetimeV2, dateType})
+  if(categoryNameEntity){
+    return `$filter=contains(${categoryNameEntity},\'${category}\')` 
+  } else if(priceEntity){
+    return `$filter=${priceEntity.name ? priceEntity.name : priceEntity} `
+  } 
+}
+
+// else if(datetimeV2){
+//   return `$filter=${datetimeV2.name ? datetimeV2.name : datetimeV2} `
+// }
+
 const orderByOp = (entities: IEntities) => {
   let orderBy: any = null;
   if (output.priceEntity && output.priceEntity.name) { 
@@ -195,7 +210,7 @@ const eqAndOrOperator = () => {
     tempArr.push(`${output.datetimeV2.name}`)
     tempArr.push(` eq `)
     // tempArr.push(`'${datetimeV2.value}'`)
-    tempArr.push(`${new Date(`${datetimeV2.value}`).toISOString()}`)
+    tempArr.push(`${new Date(`${datetimeV2.value.value}`).toISOString()}`)
   }
   if(datetimeV2 && output.dateType==="set"){
     tempArr.push(` and `)
@@ -222,9 +237,11 @@ const prepOdataQuery = (luis: ILuis, intent: string): IOdataQuery => {
   output.serviceRootName = getResourceName(intent);
  
   const skillEntityMapping: IPriceEntityMapping = getEntityMapping(luis.prediction.entities);
+  const filterContains = getFilter(skillEntityMapping);
+  console.log({filterContains})
   const orderByOperator = orderByOp(luis.prediction.entities) // `&$orderby=${orderByOp(luis.prediction.entities)} `;
   const select = selectFields(output.select)
-  const baseQuery = `${output.serviceRootName}$filter=contains(${output.categoryNameEntity},\'${output.category}\')${select ? select : ''}`;
+  const baseQuery = `${output.serviceRootName}${filterContains}${select}`;
   const resultArr: any = [];
   const baseQueryV2 = eqAndOrOperator();
 
@@ -237,7 +254,7 @@ const prepOdataQuery = (luis: ILuis, intent: string): IOdataQuery => {
   return {
     resource: intent,
     query: luis.query,
-    odataURI: `${encodeURI(resultArr.join(''))}${output.format}`,
+    odataURI: `${resultArr.join('')}${output.format}`,
     odataURIv2:baseQueryV2,
     mappedEntities: skillEntityMapping
   };
