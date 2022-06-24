@@ -156,6 +156,11 @@ There are two types of date 1) type `date` and 2) type `daterange`
 1. date = if user inputs a specific date (eg Dec 2, 2021)
 2. daterange = if user inputs a non specific date (eg Dec 2021) - no days specifiied. 
 
+TEST CASES for DateTypes:
+What is the price forecast for stainless steel in USA for the next 6 months ---> type daterange
+What is the price forecast for stainless steel in USA on Dec 12, 2024 ---> type date
+What is the quarterly price forecast for stainless steel in USA ---> type set
+
 === constraints ===
 1. Category: needs value
 2. Date: if exists prepend and if not exists dont add

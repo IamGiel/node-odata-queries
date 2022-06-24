@@ -42,7 +42,7 @@ const toTitleCase = (str: string) => {
 router.get("/getOdataQuery", async (req: Request, res: Response, next: NextFunction) => {
   const result = await luisService(req.body.userInput)
   const constructedDataQuery = await odataQuery(result.data)
-  console.log(">>>>>>>>>>>>>>>>>>>>>>> ODATA QUERY >>>>>>>>>>>>>>>>>> \n ", constructedDataQuery)
+  console.log(">>>>>>>>>>>>>>>>>>>>>>> ODATA QUERY >>>>>>>>>>>>>>>>>> \n ", {constructedDataQuery})
   res.send(constructedDataQuery)
 
   const config:IHttpConfig = {
@@ -62,7 +62,6 @@ router.get("/startQuery", async (req: Request, res: Response, next: NextFunction
   const result = await luisService(req.body.userInput)
   const constructedDataQuery = await odataQuery(result.data)
   
-  // console.log(">>>>>>>>>>>>>>>>>>>>>>> ODATA QUERY >>>>>>>>>>>>>>>>>> \n ", constructedDataQuery)
   
   const config:IHttpConfig = {
     method: 'get',

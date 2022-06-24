@@ -39,7 +39,7 @@ export const odataQuery = (entity: ILuis):IOdataQuery => {
 }
 
 const output: IPriceEntityMapping = {};
-output.select = [];
+
 
 const getIntentAndOdataQuery = (luis: ILuis) => {
   switch (luis.prediction.topIntent) {
@@ -83,6 +83,8 @@ const getEntityMapping = (entities: IEntities) => {
   const hasSubCategoryName: boolean = entities.hasOwnProperty("categoryNameEntity");
   const hasCategoryNamev2: boolean = entities.hasOwnProperty("categoryName_v2");
   
+  output.select = [];
+
   if (hasPricingOutlook) {
     output.pricingOutlook = `market_outlook`;
   }
@@ -153,12 +155,30 @@ const getEntityMapping = (entities: IEntities) => {
 const getFilter = (filterCandidates:IPriceEntityMapping) => {
   const {category,categoryNameEntity, datetimeV2, dateType, priceEntity, overviewEntity, pricingOutlook, trendEntity, gradeEntity} = filterCandidates;
    
-  console.log({categoryNameEntity, datetimeV2, dateType})
+  console.log({categoryNameEntity, datetimeV2, dateType, priceEntity})
+  let theFilterPart = '';
   if(categoryNameEntity){
-    return `$filter=contains(${categoryNameEntity},\'${category}\')` 
+    theFilterPart = `$filter=contains(${categoryNameEntity},\'${category}\')`;
   } else if(priceEntity){
-    return `$filter=${priceEntity.name ? priceEntity.name : priceEntity} `
+    theFilterPart = `$filter=${priceEntity.name} eq '<some-value>'`
   } 
+
+  switch (dateType) {
+    case `daterange`:
+      // return `$filter=${priceEntity.name} and ${datetimeV2.name} eq ${datetimeV2.value.value}`
+      return `${theFilterPart} and actual_period gt '<some-UTC-date>' and actual_period lt '<some-UTC-date>'`
+      break;
+    case `date`: // exact date
+      // return `$filter=${priceEntity.name} and ${datetimeV2.name} eq ${datetimeV2.value.value}`;
+      return `${theFilterPart} and ${datetimeV2.name} eq ${new Date(`${datetimeV2.value.value}`).toISOString()}`
+      break;
+    case `set`:
+      // return `$filter=${priceEntity.name} &${datetimeV2.name} eq ${datetimeV2.value.value}`
+      return `${theFilterPart} and (calculate values in period of time)`
+      break;
+    default:
+      break;
+  }
 }
 
 // else if(datetimeV2){
@@ -177,14 +197,6 @@ const orderByOp = (entities: IEntities) => {
 
 const topSkip = (resourceName) => {
   // GET serviceRoot/People?$top=2
-}
-
-const selectFields = (selectedFields?:string[]) => {
-  if(selectedFields){
-    return `&$select=${selectedFields.join(",")}`
-  } else {
-    return '';
-  }
 }
 
 const eqAndOrOperator = () => {
@@ -238,9 +250,9 @@ const prepOdataQuery = (luis: ILuis, intent: string): IOdataQuery => {
  
   const skillEntityMapping: IPriceEntityMapping = getEntityMapping(luis.prediction.entities);
   const filterContains = getFilter(skillEntityMapping);
-  console.log({filterContains})
+  // console.log({filterContains})
   const orderByOperator = orderByOp(luis.prediction.entities) // `&$orderby=${orderByOp(luis.prediction.entities)} `;
-  const select = selectFields(output.select)
+  const select = output.select ? `&$select=${output.select.join(",")}` : '';
   const baseQuery = `${output.serviceRootName}${filterContains}${select}`;
   const resultArr: any = [];
   const baseQueryV2 = eqAndOrOperator();

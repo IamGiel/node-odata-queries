@@ -1,62 +1,74 @@
- ```
- {
-  resource: 'intent_category_priceCheck',
-  query: 'On nov 14 1984 Petrol Prices in Singapore',
-  odataURI: "marketprice/Prices?$filter=contains(category_name,'Energy')&$orderby=actual_period%20asc&%24format=JSON&%24top=10&%24skip=0&%24count=true",
-  odataURIv2: "marketprice/Prices?$filter=category_name eq 'Energy' and actual_period eq 1984-11-14T00:00:00.000Z&$format=JSON&$top=10&$skip=0&$count=true",
-  mappedEntities: {
-    filterCategoryName: 'category_name',
-    datetimeV2: { name: 'actual_period', value: '1984-11-14' },
-    dateType: 'date',
-    sort: 'asc',
-    geographyV2: { name: 'location_name', value: [Object] },
-    categoryNameEntity: 'category_name',
-    category: 'Energy',
-    serviceRootName: 'marketprice/Prices?'
+```
+{
+  constructedDataQuery: {
+    resource: 'intent_category_priceCheck',
+    query: 'What is the price forecast for stainless steel in USA on Dec 12, 2024',
+    odataURI: "marketprice/Prices?$filter=contains(sub_category_name,'Stainless Steel') and actual_period eq 2024-12-12T00:00:00.000Z&$select=actual_period,price_point,unit,currency,location_name,percentage_change,sub_category_name&$orderby=price_point desc&$format=JSON&$top=10&$skip=0&$count=true",
+    odataURIv2: "marketprice/Prices?$filter=sub_category_name eq 'Stainless Steel' and actual_period eq 2024-12-12T00:00:00.000Z&$format=JSON&$top=10&$skip=0&$count=true",
+    mappedEntities: {
+      select: [Array],
+      serviceRootName: 'marketprice/Prices?',
+      pricingOutlook: 'market_outlook',
+      datetimeV2: [Object],
+      dateType: 'date',
+      sort: 'desc',
+      priceEntity: [Object],
+      geographyV2: [Object],
+      trendEntity: [Object],
+      categoryNameEntity: 'sub_category_name',
+      category: 'Stainless Steel',
+      format: '&$format=JSON&$top=10&$skip=0&$count=true'
+    }
   }
 }
-
 ```
 
 ```
-  {
-  resource: 'intent_category_priceCheck',
-  query: 'Past 12 months Petrol Prices in Singapore',
-  odataURI: "marketprice/Prices?$filter=contains(category_name,'Energy')&$orderby=price_point%20desc&%24format=JSON&%24top=10&%24skip=0&%24count=true",
-  odataURIv2: "marketprice/Prices?$filter=category_name eq 'Energy' and actual_period gt 2021-06-21T00:00:00.000Z and actual_period lt 2022-06-21T00:00:00.000Z&$format=JSON&$top=10&$skip=0&$count=true",
-  mappedEntities: {
-    filterCategoryName: 'category_name',
-    datetimeV2: { name: 'actual_period', value: [Object] },
-    dateType: 'daterange',
-    sort: 'desc',
-    priceEntity: { name: 'price_point', value: 'Prices' },
-    geographyV2: { name: 'location_name', value: [Object] },
-    categoryNameEntity: 'category_name',
-    category: 'Energy',
-    serviceRootName: 'marketprice/Prices?'
+{
+  constructedDataQuery: {
+    resource: 'intent_category_priceCheck',
+    query: 'What is the price forecast for stainless steel in USA for the next 6 months',
+    odataURI: "marketprice/Prices?$filter=contains(sub_category_name,'Stainless Steel') and actual_period gt '<some-UTC-date>' and actual_period lt '<some-UTC-date>'&$select=actual_period,price_point,unit,currency,location_name,percentage_change,sub_category_name&$orderby=price_point desc&$format=JSON&$top=10&$skip=0&$count=true",
+    odataURIv2: "marketprice/Prices?$filter=sub_category_name eq 'Stainless Steel' and actual_period gt 2022-06-25T00:00:00.000Z and actual_period lt 2022-12-25T00:00:00.000Z&$format=JSON&$top=10&$skip=0&$count=true",
+    mappedEntities: {
+      serviceRootName: 'marketprice/Prices?',
+      select: [Array],
+      pricingOutlook: 'market_outlook',
+      datetimeV2: [Object],
+      dateType: 'daterange',
+      sort: 'desc',
+      priceEntity: [Object],
+      geographyV2: [Object],
+      trendEntity: [Object],
+      categoryNameEntity: 'sub_category_name',
+      category: 'Stainless Steel',
+      format: '&$format=JSON&$top=10&$skip=0&$count=true'
+    }
   }
 }
-
 ```
 
 ```
- {
-  resource: 'intent_category_priceCheck',
-  query: 'hdpe price forecast ona quarterly basis can you provide the charts',
-  odataURI: "marketprice/Prices?$filter=contains(sub_category_name,'Hdpe')&$orderby=price_point%20desc&%24format=JSON&%24top=10&%24skip=0&%24count=true",
-  odataURIv2: "marketprice/Prices?$filter=sub_category_name eq 'Hdpe' and actual_period eq P3M&$format=JSON&$top=10&$skip=0&$count=true",
-  mappedEntities: {
-    filterSubCategoryName: 'sub_category_name',
-    pricingOutlook: 'market_outlook',
-    datetimeV2: { name: 'actual_period', value: 'P3M' },
-    dateType: 'set',
-    sort: 'desc',
-    priceEntity: { name: 'price_point', value: 'price' },
-    trendEntity: { name: 'percentage_change', value: 'price forecast' },
-    categoryNameEntity: 'sub_category_name',
-    category: 'Hdpe',
-    serviceRootName: 'marketprice/Prices?'
+{
+  constructedDataQuery: {
+    resource: 'intent_category_priceCheck',
+    query: 'What is the quarterly price forecast for stainless steel in USA',
+    odataURI: "marketprice/Prices?$filter=contains(sub_category_name,'Stainless Steel') and (calculate values in period of time)&$select=actual_period,price_point,unit,currency,location_name,percentage_change,sub_category_name&$orderby=price_point desc&$format=JSON&$top=10&$skip=0&$count=true",
+    odataURIv2: "marketprice/Prices?$filter=sub_category_name eq 'Stainless Steel' and actual_period eq P3M&$format=JSON&$top=10&$skip=0&$count=true",
+    mappedEntities: {
+      serviceRootName: 'marketprice/Prices?',
+      select: [Array],
+      pricingOutlook: 'market_outlook',
+      datetimeV2: [Object],
+      dateType: 'set',
+      sort: 'desc',
+      priceEntity: [Object],
+      geographyV2: [Object],
+      trendEntity: [Object],
+      categoryNameEntity: 'sub_category_name',
+      category: 'Stainless Steel',
+      format: '&$format=JSON&$top=10&$skip=0&$count=true'
+    }
   }
 }
-
 ```

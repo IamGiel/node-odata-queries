@@ -15,7 +15,7 @@ export interface ILuisDate {
 }
 
 export const dateResolver = (dateObj:ILuisDate) => {
-  console.log("date resolver ", dateObj)
+  // console.log("date resolver ", dateObj)
   let res:any = {};
   if(dateObj.type === "daterange"){
     res.fieldName = `actual_period`;
